@@ -1,13 +1,15 @@
 package com.autenticacao.app.adapter.repositoryImpl;
 
 import com.autenticacao.app.adapter.data.UserData;
-import com.autenticacao.app.adapter.model.UserModel;
-import com.autenticacao.app.domain.entity.User;
+import com.autenticacao.app.adapter.entity.UserEntity;
+import com.autenticacao.app.domain.model.User;
 import com.autenticacao.app.domain.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Primary
 @Component
@@ -26,8 +28,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void saveUser(User user) {
-        UserModel userModel = mapper.map(user, UserModel.class);
+        var userModel = mapper.map(user, UserEntity.class);
         data.save(userModel);
+    }
+
+    public UserEntity findByEmail(String email) {
+        Optional<UserEntity> user =  data.findByEmail(email);
+        return user.orElse(null);
     }
 
 }

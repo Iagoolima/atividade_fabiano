@@ -1,4 +1,4 @@
-package com.autenticacao.app.domain.entity;
+package com.autenticacao.app.domain.model;
 
 import lombok.Getter;
 import lombok.Setter;
