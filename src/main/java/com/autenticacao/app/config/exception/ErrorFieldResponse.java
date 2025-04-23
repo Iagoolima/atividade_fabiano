@@ -1,4 +1,4 @@
-package com.autenticacao.app.domain.exception;
+package com.autenticacao.app.config.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

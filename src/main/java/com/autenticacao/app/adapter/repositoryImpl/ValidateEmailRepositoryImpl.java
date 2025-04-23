@@ -28,9 +28,7 @@ public class ValidateEmailRepositoryImpl implements ValidateEmailRepository {
 
     public ValidateEmail findByEmail(String email) {
         Optional<ValidateEmailEntity> validateUserEmail = data.findByEmail(email);
-        if(validateUserEmail.isEmpty())
-            return null;
-        return mapper.map(validateUserEmail.get(), ValidateEmail.class);
+        return validateUserEmail.map(validateEmailEntity -> mapper.map(validateEmailEntity, ValidateEmail.class)).orElse(null);
     }
 
     public void deleteById(Long id) {

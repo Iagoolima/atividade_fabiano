@@ -2,6 +2,7 @@ package com.autenticacao.app.config.security;
 
 import com.autenticacao.app.config.service.JwtServiceImpl;
 import com.autenticacao.app.config.service.SecurityUserDetailsService;
+import com.autenticacao.app.domain.business.Business;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,37 +19,44 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtServiceImpl jwtService;
-
     private final SecurityUserDetailsService userDetailService;
 
-
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String authorization = httpServletRequest.getHeader("Authorization");
-        if (authorization != null && authorization.startsWith("Bearer")) {
+        String authorization = request.getHeader("Authorization");
+
+        if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.split(" ")[1];
 
-            if (jwtService.isTokenValido(token)) {
-                String login = jwtService.obterLoginUsuario(token);
+            try {
+                if (jwtService.isTokenValido(token)) {
+                    String login = jwtService.obterLoginUsuario(token);
 
-                var userAuth = userDetailService.loadUserByUsername(login);
-                if (userAuth != null) {
-                    UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(userAuth, null,
-                            userAuth.getAuthorities());
-                    user.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-                    SecurityContextHolder.getContext().setAuthentication(user);
+                    CustomUserDetails userAuth = (CustomUserDetails) userDetailService.loadUserByUsername(login);
+                    if (userAuth != null) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userAuth, null, userAuth.getAuthorities()
+                        );
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                        Business.init(userAuth.getUser());
+                    }
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Token inválido\"}");
+                    return;
                 }
-            }
-            else {
-                httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                httpServletResponse.setContentType("application/json");
-                httpServletResponse.getWriter().write("{\"error\": \"Invalid token\"}");
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Erro ao processar token\"}");
                 return;
             }
-
         }
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
-    }
 
+        filterChain.doFilter(request, response);
+    }
 }

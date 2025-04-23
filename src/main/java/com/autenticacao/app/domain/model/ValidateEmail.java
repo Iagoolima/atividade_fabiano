@@ -1,7 +1,5 @@
 package com.autenticacao.app.domain.model;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

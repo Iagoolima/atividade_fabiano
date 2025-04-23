@@ -62,10 +62,10 @@ public class SendEmailUseCase {
     }
 
     private void userExists(EmailUser emailUser) {
-        if(userRepository.existsByEmail(emailUser.getEmail()))
+        if(userRepository.existsByEmail(emailUser.getEmail().toLowerCase()))
             throw new RuntimeException(messageError.EMAIL_IS_EXIST);
 
-        var validateEmail = validateEmailRepository.findByEmail(emailUser.getEmail());
+        var validateEmail = validateEmailRepository.findByEmail(emailUser.getEmail().toLowerCase());
         if(validateEmail != null) {
             validateEmailRepository.deleteById(validateEmail.getId());
         }
@@ -83,6 +83,7 @@ public class SendEmailUseCase {
         var validateEmail = new ValidateEmail();
         validateEmail.setValidated(false);
         validateEmail.setCode(codeExpiration);
+        validateEmail.setEmail(emailUser.getEmail());
         validateEmail.setSentTime(LocalDateTime.now());
         validateEmail.setExpirationTime(
                 LocalDateTime.now().plusMinutes(minutesExpiration)

@@ -19,7 +19,7 @@ public class ForgotPasswordEntity {
     private String email;
     private UUID tokenUpdate;
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_user", referencedColumnName = "idUser", foreignKey = @ForeignKey(name = "fk_usuario"))
+    @JoinColumn(name = "uuid_user", referencedColumnName = "uuidUser", foreignKey = @ForeignKey(name = "fk_usuario"))
     private UserEntity idUser;
     private String code;
     private boolean validated = false;

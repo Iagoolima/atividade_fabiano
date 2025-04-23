@@ -1,6 +1,7 @@
 package com.autenticacao.app.config.service;
 
 import com.autenticacao.app.adapter.entity.UserEntity;
+import com.autenticacao.app.domain.model.User;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -34,7 +35,7 @@ public class JwtServiceImpl {
         return new SecretKeySpec(chaveBytes, "AES");
     }
 
-    public String generateToken(UserEntity user) throws JOSEException {
+    public ResponseJWT generateToken(User user) throws JOSEException {
         long exp = Long.parseLong(acessExpiration);
         LocalDateTime expirationDateTime = LocalDateTime.now().plusMinutes(exp);
         Instant instant = expirationDateTime.atZone(ZoneId.systemDefault()).toInstant();
@@ -46,6 +47,7 @@ public class JwtServiceImpl {
                 .expirationTime(data)
                 .claim("timeExpirition", expirationDateTimeToken)
                 .claim("id", user.getId().toString())
+                .claim("role", user.getRole())
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
@@ -57,7 +59,7 @@ public class JwtServiceImpl {
 
         jweObject.encrypt(new DirectEncrypter(getSecretKey()));
 
-        return jweObject.serialize();
+        return new ResponseJWT(jweObject.serialize());
     }
 
     public JWTClaimsSet getClaims(String token) throws Exception {

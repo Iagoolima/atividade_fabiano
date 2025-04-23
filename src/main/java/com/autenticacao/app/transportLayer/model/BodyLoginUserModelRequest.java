@@ -5,20 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class BodyUserRegisterModelRequest {
+public class BodyLoginUserModelRequest {
     @NotBlank(message = "Campo e-mail necessario.")
     @JsonProperty("email")
     private String email;
 
-    @NotBlank(message = "Campo de nome necessario.")
-    @JsonProperty("name")
-    private String name;
-
-    @NotBlank(message = "Campo de senha necessario.")
+    @NotBlank(message = "Campo senha necessario.")
     @JsonProperty("password")
     private String password;
-
-    @NotBlank(message = "Campo de permissão do usuario necessario.")
-    @JsonProperty("role")
-    private String role;
 }

@@ -28,13 +28,27 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void saveUser(User user) {
-        var userModel = mapper.map(user, UserEntity.class);
-        data.save(userModel);
+        var userEntity = mapper.map(user, UserEntity.class);
+        data.save(userEntity);
     }
 
-    public UserEntity findByEmail(String email) {
+    @Override
+    public User saveUserAndReturn(User user) {
+        var userEntity = mapper.map(user, UserEntity.class);
+        var savedUser = data.save(userEntity);
+        return mapper.map(savedUser, User.class);
+
+    }
+
+    public User findByEmail(String email) {
         Optional<UserEntity> user =  data.findByEmail(email);
-        return user.orElse(null);
+        return user.map(userEntity -> mapper.map(userEntity, User.class)).orElse(null);
+    }
+
+    public User findById(User user) {
+        var userEntity = mapper.map(user, UserEntity.class);
+        Optional<UserEntity> userData =  data.findById(userEntity.getId());
+        return userData.map(userEnt -> mapper.map(userEntity, User.class)).orElse(null);
     }
 
 }

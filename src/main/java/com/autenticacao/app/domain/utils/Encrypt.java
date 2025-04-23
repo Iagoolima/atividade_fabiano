@@ -23,4 +23,10 @@ public class Encrypt {
     public String getPasswordEncrypt(String seed, UUID water) {
         return soil + seed + water.toString();
     }
+
+    public Boolean comparePasswordEncrypt(String password, String passwordData) {
+        return passwordEncoder.matches(password, passwordData);
+    }
+
+
 }

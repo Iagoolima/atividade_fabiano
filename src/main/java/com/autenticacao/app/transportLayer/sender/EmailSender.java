@@ -1,7 +1,7 @@
 package com.autenticacao.app.transportLayer.sender;
 
 import com.autenticacao.app.domain.constants.MessageError;
-import com.autenticacao.app.domain.exception.GeneralErrorException;
+import com.autenticacao.app.config.exception.GeneralErrorException;
 import com.autenticacao.app.transportLayer.model.BodySendEmailModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

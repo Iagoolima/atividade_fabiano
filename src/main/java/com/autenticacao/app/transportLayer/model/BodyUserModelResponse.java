@@ -1,15 +1,11 @@
-package com.autenticacao.app.domain.model;
+package com.autenticacao.app.transportLayer.model;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
-
-@Getter
 @Setter
-public class User {
-    private Long id;
-    private UUID uuidUser;
+@Getter
+public class BodyUserModelResponse {
     private String email;
     private String name;
     private String password;

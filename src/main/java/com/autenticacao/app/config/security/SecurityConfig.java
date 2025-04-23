@@ -2,6 +2,7 @@ package com.autenticacao.app.config.security;
 
 import com.autenticacao.app.config.service.JwtServiceImpl;
 import com.autenticacao.app.config.service.SecurityUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -50,15 +51,16 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder,
-                                                       UserDetailsService userDetailsService) throws Exception {
+    @Autowired
+    private CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder)
-                .and()
-                .build();
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) throws Exception {
+
+        return http.getSharedObject(AuthenticationManagerBuilder.class).userDetailsService(userDetailsService).passwordEncoder(passwordEncoder).and().build();
     }
 
     @Bean
@@ -68,27 +70,22 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
-                .authorizeHttpRequests(authz ->
-                        authz.requestMatchers("/register/validate-email")
-                        .permitAll()
-                        .requestMatchers("/swagger-ui/**"
-                                ,"/v3/api-docs/**"
-                                ,"/swagger-resources/**"
-                                ,"/swagger-ui.html"
-                                ,"/webjars/**")
-                                .permitAll()
-                        .anyRequest()
-                        .authenticated())
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+        http.csrf().disable()
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/auth/login", "/register/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/verify/find/role_user").hasAnyRole("USER")
+                        .requestMatchers("/verify/find/role_admin").hasAnyRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint) // 401
+                        .accessDeniedHandler(customAccessDeniedHandler)           // 403
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
 

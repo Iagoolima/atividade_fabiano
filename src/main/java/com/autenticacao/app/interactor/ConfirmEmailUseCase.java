@@ -3,6 +3,7 @@ package com.autenticacao.app.interactor;
 import com.autenticacao.app.adapter.repositoryImpl.ValidateEmailRepositoryImpl;
 import com.autenticacao.app.domain.constants.MessageError;
 import com.autenticacao.app.domain.constants.MessageSucess;
+import com.autenticacao.app.config.exception.GeneralErrorException;
 import com.autenticacao.app.domain.model.ConfirmEmail;
 import com.autenticacao.app.domain.model.SucessMessageResponse;
 import com.autenticacao.app.domain.model.ValidateEmail;
@@ -35,9 +36,9 @@ public class ConfirmEmailUseCase {
     }
 
     private ValidateEmail findRegister(ConfirmEmail confirmEmail) {
-        var result = validateEmailRepository.findByEmail(confirmEmail.getEmail());
+        var result = validateEmailRepository.findByEmail(confirmEmail.getEmail().toLowerCase());
         if(result == null)
-            throw new RuntimeException(messageError.EMAIL_NOT_FOUND);
+            throw new GeneralErrorException(messageError.EMAIL_NOT_FOUND);
 
 
         return mapper.map(result, ValidateEmail.class);
@@ -46,13 +47,13 @@ public class ConfirmEmailUseCase {
     private void validateTime(ConfirmEmail confirmEmail, ValidateEmail validateEmail) {
         if(confirmEmail.getDateTime().isAfter(validateEmail.getExpirationTime())) {
             validateEmailRepository.deleteById(validateEmail.getId());
-            throw new RuntimeException(messageError.TIMER_EXPIRED);
+            throw new GeneralErrorException(messageError.TIMER_EXPIRED);
         }
     }
 
     private void validateCode(ConfirmEmail confirmEmail, ValidateEmail validateEmail) {
-        if(confirmEmail.getCode().equalsIgnoreCase(validateEmail.getCode()))
-            throw new RuntimeException(messageError.TIMER_EXPIRED);
+        if(!confirmEmail.getCode().equalsIgnoreCase(validateEmail.getCode()))
+            throw new GeneralErrorException(messageError.CODE_INCORRECT);
     }
 
     private void emailValidated(ValidateEmail validateEmail) {
