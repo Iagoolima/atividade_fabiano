@@ -4,8 +4,8 @@ import com.autenticacao.app.adapter.data.ValidateEmailData;
 import com.autenticacao.app.adapter.entity.ValidateEmailEntity;
 import com.autenticacao.app.domain.model.ValidateEmail;
 import com.autenticacao.app.domain.repository.ValidateEmailRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -13,13 +13,12 @@ import java.util.Optional;
 
 @Primary
 @Component
+@RequiredArgsConstructor
 public class ValidateEmailRepositoryImpl implements ValidateEmailRepository {
 
-    @Autowired
-    private ValidateEmailData data;
+    private final ValidateEmailData data;
 
-    @Autowired
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     public void saveValidateEmail(ValidateEmail validateEmail) {
         var validateEmailModel = mapper.map(validateEmail, ValidateEmailEntity.class);

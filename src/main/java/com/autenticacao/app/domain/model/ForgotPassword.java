@@ -4,26 +4,25 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
-public class ValidateEmail {
+public class ForgotPassword {
     private Long id;
     private String email;
-    private String code;
-    private Boolean validated;
+    private UUID tokenUpdate;
+    private User idUser;
     private LocalDateTime sentTime;
     private LocalDateTime expirationTime;
 
-    public ValidateEmail() {
-    }
-
-    public ValidateEmail(String email, String code, Boolean validated, LocalDateTime sentTime, LocalDateTime expirationTime) {
+    public ForgotPassword(String email, UUID tokenUpdate, User idUser, LocalDateTime sentTime, LocalDateTime expirationTime) {
         this.email = email;
-        this.code = code;
-        this.validated = validated;
+        this.tokenUpdate = tokenUpdate;
+        this.idUser = idUser;
         this.sentTime = sentTime;
         this.expirationTime = expirationTime;
     }
-
+    public ForgotPassword() {
+    }
 }

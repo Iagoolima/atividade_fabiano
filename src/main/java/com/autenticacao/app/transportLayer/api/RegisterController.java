@@ -1,15 +1,15 @@
 package com.autenticacao.app.transportLayer.api;
 
-import com.autenticacao.app.config.exception.ErrorResponse;
+import com.autenticacao.app.domain.business.Business;
 import com.autenticacao.app.domain.model.ConfirmEmail;
 import com.autenticacao.app.domain.model.EmailUser;
 import com.autenticacao.app.domain.model.User;
 import com.autenticacao.app.interactor.ConfirmEmailUseCase;
 import com.autenticacao.app.interactor.RegisterFinalUserUseCase;
-import com.autenticacao.app.interactor.SendEmailUseCase;
+import com.autenticacao.app.interactor.SendEmailRegisterUserUseCase;
 import com.autenticacao.app.transportLayer.model.*;
-import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
+import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,55 +27,42 @@ public class RegisterController {
     private RegisterFinalUserUseCase registerFinalUserUseCase;
 
     @Autowired
-    private SendEmailUseCase sendEmailUseCase;
+    private SendEmailRegisterUserUseCase sendEmailRegisterUserUseCase;
 
     @Autowired
     private ConfirmEmailUseCase confirmEmailUseCase;
 
     @PostMapping("/validate-email")
-    public ResponseEntity<?> sendEmail(@RequestBody  @Valid BodyEmailUserModelRequest emailUserModelRequest) {
+    public ResponseEntity<BodySucessMessageModelResponse> sendEmail(@RequestBody  @Valid BodyEmailUserModelRequest emailUserModelRequest) {
         var email = mapper.map(emailUserModelRequest, EmailUser.class);
-        try {
-            var response = sendEmailUseCase.sendEmailRegisterUser(email);
+            var response = sendEmailRegisterUserUseCase.sendEmailRegisterUser(email);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(mapper.map(response, BodySucessMessageModelResponse.class));
-        } catch(RuntimeException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
-        }
     }
 
     @PostMapping("/confirm-email")
-    public ResponseEntity<?> confirmEmail(@RequestBody @Valid BodyConfirmEmailModelRequest bodyConfirmEmailModelRequest) {
+    public ResponseEntity<BodySucessMessageModelResponse> confirmEmail(@RequestBody @Valid BodyConfirmEmailModelRequest bodyConfirmEmailModelRequest) {
         var confirmEmail = mapper.map(bodyConfirmEmailModelRequest, ConfirmEmail.class);
-        try{
             var response = confirmEmailUseCase.confirmEmail(confirmEmail);
             return ResponseEntity
                     .status(200)
                     .body(mapper.map(response, BodySucessMessageModelResponse.class));
-        } catch (RuntimeException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
-        }
     }
 
+    @SneakyThrows
     @PostMapping("/full")
-    public ResponseEntity<?> registerFinal(@RequestBody @Valid BodyUserRegisterModelRequest userModelRequest) {
+    public ResponseEntity<BodySucessValueModelResponse> registerFinal(@RequestBody @Valid BodyUserRegisterModelRequest userModelRequest) {
         var user = mapper.map(userModelRequest, User.class);
-        try {
-            var response = registerFinalUserUseCase.register(user);
-            return ResponseEntity
+        var response = registerFinalUserUseCase.register(user);
+
+        var responseBody = mapper.map(response, BodySucessValueModelResponse.class);
+
+        var token = Business.getInstance().getToken();
+        responseBody.setToken(token);
+
+        return ResponseEntity
                     .status(200)
-                    .body(mapper.map(response, BodySucessValueModelResponse.class));
-        } catch (RuntimeException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
-        } catch (JOSEException e) {
-            throw new RuntimeException(e);
-        }
+                    .body(responseBody);
     }
 }

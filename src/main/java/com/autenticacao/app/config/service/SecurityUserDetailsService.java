@@ -1,11 +1,9 @@
 package com.autenticacao.app.config.service;
 
-import com.autenticacao.app.adapter.entity.UserEntity;
-import com.autenticacao.app.adapter.repositoryImpl.UserRepositoryImpl;
 import com.autenticacao.app.config.security.CustomUserDetails;
+import com.autenticacao.app.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +15,7 @@ import java.util.Collections;
 public class SecurityUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepositoryImpl userRepository;
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

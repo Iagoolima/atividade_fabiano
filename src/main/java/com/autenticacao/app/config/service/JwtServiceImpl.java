@@ -21,8 +21,11 @@ import java.util.Base64;
 @Service
 public class JwtServiceImpl {
 
-    @Value("${jwt.acesso-expiracao}")
+    @Value("${jwt.acess-expiracao}")
     private String acessExpiration;
+
+    @Value("${jwt.refresh-expiracao}")
+    private String refreshExpiration;
 
     @Value("${jwt.chave-assinatura}")
     private String signatureKey;
@@ -36,7 +39,14 @@ public class JwtServiceImpl {
     }
 
     public ResponseJWT generateToken(User user) throws JOSEException {
-        long exp = Long.parseLong(acessExpiration);
+        var acessToken = generate(user, acessExpiration, "acess");
+        var refreshToken = generate(user, refreshExpiration, "refresh");
+
+        return new ResponseJWT(acessToken, refreshToken);
+    }
+
+    private String generate(User user, String timeExpiration, String typeToken) throws JOSEException {
+        long exp = Long.parseLong(timeExpiration);
         LocalDateTime expirationDateTime = LocalDateTime.now().plusMinutes(exp);
         Instant instant = expirationDateTime.atZone(ZoneId.systemDefault()).toInstant();
         java.util.Date data = Date.from(instant);
@@ -48,6 +58,7 @@ public class JwtServiceImpl {
                 .claim("timeExpirition", expirationDateTimeToken)
                 .claim("id", user.getId().toString())
                 .claim("role", user.getRole())
+                .claim("type", typeToken)
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
@@ -59,7 +70,7 @@ public class JwtServiceImpl {
 
         jweObject.encrypt(new DirectEncrypter(getSecretKey()));
 
-        return new ResponseJWT(jweObject.serialize());
+        return jweObject.serialize();
     }
 
     public JWTClaimsSet getClaims(String token) throws Exception {
@@ -80,11 +91,6 @@ public class JwtServiceImpl {
             java.util.Date dataEx = claims.getExpirationTime();
             LocalDateTime dataExpiration = dataEx.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-            Boolean isRefreshToken = (Boolean) claims.getClaim("refreshToken");
-            if (isRefreshToken != null && isRefreshToken) {
-                return !LocalDateTime.now().isAfter(dataExpiration);
-            }
-
             return !LocalDateTime.now().isAfter(dataExpiration);
         }
         catch (Exception e) {
@@ -101,6 +107,19 @@ public class JwtServiceImpl {
             return null;
         }
     }
+
+    public String obterRefreshToken(String token) {
+        try {
+            JWTClaimsSet claims = getClaims(token);
+            Object type = claims.getClaim("type");
+
+            return type != null ? type.toString() : null;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
 
 
 

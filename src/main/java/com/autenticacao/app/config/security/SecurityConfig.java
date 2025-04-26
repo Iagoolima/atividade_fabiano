@@ -72,14 +72,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/auth/login", "/register/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/auth/login", "/register/**", "/forgot-password/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/verify/find/role_user").hasAnyRole("USER")
                         .requestMatchers("/verify/find/role_admin").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint) // 401
-                        .accessDeniedHandler(customAccessDeniedHandler)           // 403
+                        .accessDeniedHandler(customAccessDeniedHandler)    // 403
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -4,6 +4,7 @@ import com.autenticacao.app.adapter.data.UserData;
 import com.autenticacao.app.adapter.entity.UserEntity;
 import com.autenticacao.app.domain.model.User;
 import com.autenticacao.app.domain.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -13,13 +14,12 @@ import java.util.Optional;
 
 @Primary
 @Component
+@RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
-    @Autowired
-    private UserData data;
+    private final UserData data;
 
-    @Autowired
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     @Override
     public Boolean existsByEmail(String email) {

@@ -1,6 +1,5 @@
 package com.autenticacao.app.transportLayer.api;
 
-import com.autenticacao.app.config.exception.ErrorResponse;
 import com.autenticacao.app.domain.business.Business;
 import com.autenticacao.app.domain.model.SucessValueResponse;
 import com.autenticacao.app.transportLayer.model.BodySucessValueModelResponse;
@@ -20,33 +19,35 @@ public class VerifyController {
 
     private final ModelMapper mapper;
 
-    @PostMapping("/find/role_user")
-    public ResponseEntity<?> verfifyRoleUser() {
+    @PostMapping("/find/user")
+    public ResponseEntity<BodySucessValueModelResponse> verfifyRoleUser() {
         var user = Business.getInstance().getUser();
-        try {
-            var response = new SucessValueResponse(mapper.map(user, BodyUserModelResponse.class));
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(mapper.map(response, BodySucessValueModelResponse.class));
-        } catch(RuntimeException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+        var response = new SucessValueResponse(mapper.map(user, BodyUserModelResponse.class));
+
+        var responseBody = mapper.map(response, BodySucessValueModelResponse.class);
+
+        if(Business.getInstance().getTypeToken().equals("refresh")) {
+            var token = Business.getInstance().getToken();
+            responseBody.setToken(token);
         }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(responseBody);
     }
 
-    @PostMapping("/find/role_admin")
-    public ResponseEntity<?> verifyRoleAdmin() {
+    @PostMapping("/find/admin")
+    public ResponseEntity<BodySucessValueModelResponse> verifyRoleAdmin() {
         var user = Business.getInstance().getUser();
-        try {
-            var response = new SucessValueResponse(mapper.map(user, BodyUserModelResponse.class));
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(mapper.map(response, BodySucessValueModelResponse.class));
-        } catch(RuntimeException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+        var response = new SucessValueResponse(mapper.map(user, BodyUserModelResponse.class));
+
+        var responseBody = mapper.map(response, BodySucessValueModelResponse.class);
+
+        if(Business.getInstance().getTypeToken().equals("refresh")) {
+            var token = Business.getInstance().getToken();
+            responseBody.setToken(token);
         }
+        return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(responseBody);
     }
 }

@@ -21,7 +21,6 @@ public class ForgotPasswordEntity {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "uuid_user", referencedColumnName = "uuidUser", foreignKey = @ForeignKey(name = "fk_usuario"))
     private UserEntity idUser;
-    private String code;
-    private boolean validated = false;
-    private LocalDateTime recordedTime;
+    private LocalDateTime sentTime;
+    private LocalDateTime expirationTime;
 }

@@ -32,6 +32,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             try {
                 if (jwtService.isTokenValido(token)) {
                     String login = jwtService.obterLoginUsuario(token);
+                    String typeToken = jwtService.obterRefreshToken(token);
 
                     CustomUserDetails userAuth = (CustomUserDetails) userDetailService.loadUserByUsername(login);
                     if (userAuth != null) {
@@ -41,7 +42,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                        Business.init(userAuth.getUser());
+                        Business.init(userAuth.getUser(), jwtService.generateToken(userAuth.getUser()), typeToken);
                     }
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

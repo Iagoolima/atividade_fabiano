@@ -1,17 +1,19 @@
 package com.autenticacao.app.interactor;
 
-import com.autenticacao.app.adapter.repositoryImpl.UserRepositoryImpl;
 import com.autenticacao.app.adapter.repositoryImpl.ValidateEmailRepositoryImpl;
 import com.autenticacao.app.config.service.JwtServiceImpl;
 import com.autenticacao.app.domain.constants.MessageError;
-import com.autenticacao.app.domain.constants.MessageSucess;
 import com.autenticacao.app.config.exception.GeneralErrorException;
+import com.autenticacao.app.domain.constants.MessageSucess;
 import com.autenticacao.app.domain.model.SucessValueResponse;
 import com.autenticacao.app.domain.model.User;
 import com.autenticacao.app.domain.model.ValidateEmail;
+import com.autenticacao.app.domain.repository.UserRepository;
+import com.autenticacao.app.domain.repository.ValidateEmailRepository;
 import com.autenticacao.app.domain.utils.Encrypt;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +21,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RegisterFinalUserUseCase {
 
     private final Encrypt encrypt;
 
-    private final UserRepositoryImpl userRepository;
+    private final UserRepository userRepository;
 
     private final ValidateEmailRepositoryImpl validateEmailRepository;
 
@@ -35,14 +38,15 @@ public class RegisterFinalUserUseCase {
 
     private final JwtServiceImpl jwtService;
 
+
     public SucessValueResponse register(User user) throws JOSEException {
         userExists(user);
-        ProcessValidatedEmail(user);
+        var validateEmail = ProcessValidatedEmail(user);
         user = generatedPassword(user);
         var registeredUser = saveUser(user);
-        var token = jwtService.generateToken(registeredUser);
-
-        return new SucessValueResponse(token);
+        deleteValidateEmail(validateEmail);
+        log.info("{}: {}", messageSucess.REGISTERED_USER, user.getEmail());
+        return new SucessValueResponse(null);
     }
 
     private void userExists(User user) {
@@ -59,15 +63,20 @@ public class RegisterFinalUserUseCase {
         return userRepository.saveUserAndReturn(user);
     }
 
-    private void ProcessValidatedEmail(User user) {
+    private void deleteValidateEmail(ValidateEmail validateEmail) {
+        validateEmailRepository.deleteById(validateEmail.getId());
+    }
+
+    private ValidateEmail ProcessValidatedEmail(User user) {
         var validateEmail = findvalidateEmail(user);
         compareEmailValidation(validateEmail);
+        return validateEmail;
     }
 
     private ValidateEmail findvalidateEmail(User user) {
         var validateEmailModel = validateEmailRepository.findByEmail(user.getEmail().toLowerCase());
         if (validateEmailModel == null)
-            throw new GeneralErrorException(messageError.EMAIL_NOT_FOUND);
+            throw new GeneralErrorException(messageError.EMAIL_NOT_PERMISSION);
         return mapper.map(validateEmailModel, ValidateEmail.class);
     }
 

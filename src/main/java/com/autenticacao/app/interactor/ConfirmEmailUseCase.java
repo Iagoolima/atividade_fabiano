@@ -7,24 +7,21 @@ import com.autenticacao.app.config.exception.GeneralErrorException;
 import com.autenticacao.app.domain.model.ConfirmEmail;
 import com.autenticacao.app.domain.model.SucessMessageResponse;
 import com.autenticacao.app.domain.model.ValidateEmail;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ConfirmEmailUseCase {
 
-    @Autowired
-    private ValidateEmailRepositoryImpl validateEmailRepository;
+    private final ValidateEmailRepositoryImpl validateEmailRepository;
 
-    @Autowired
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
-    @Autowired
-    private MessageError messageError;
+    private final MessageError messageError;
 
-    @Autowired
-    private MessageSucess messageSucess;
+    private final MessageSucess messageSucess;
 
     public SucessMessageResponse confirmEmail(ConfirmEmail confirmEmail) {
         var validateEmail = findRegister(confirmEmail);

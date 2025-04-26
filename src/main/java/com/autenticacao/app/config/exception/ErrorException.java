@@ -5,7 +5,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,13 +15,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ErrorException {
 
     @ResponseBody
-    @ExceptionHandler(RuntimeException.class)
-    public GeneralErrorException handleRuntimeExceptions(RuntimeException ex) {
-        return new GeneralErrorException(ex.getMessage());
+    @ExceptionHandler(GeneralErrorException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeExceptions(RuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse( HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorFieldResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
         var errors = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getDefaultMessage())
                 .toList();
@@ -31,7 +32,7 @@ public class ErrorException {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleRuntimeExceptions(Exception ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleRuntimeExceptions(Exception ex, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage())
         );

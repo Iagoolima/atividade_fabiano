@@ -7,9 +7,11 @@ public class MessageError {
     public final String EMAIL_IS_EXIST = "Email já cadastrado";
     public final String ERROR_SEND_EMAIL = "Erro ao enviar o email";
     public final String EMAIL_NOT_FOUND = "Email não encontrado";
+    public final String EMAIL_NOT_PERMISSION = "Não tem permissão de cadastrar esse usuario no momento.";
     public final String EMAIL_NOT_VALIDATED = "Email não foi validado";
     public final String TIMER_EXPIRED = "Tempo expirado. por favor, tente novamente!";
     public final String CODE_INCORRECT = "Codigo de validação incorreto";
     public final String PASSWORD_INCORRECT = "Senha invalida";
     public final String USER_NOT_FOUND = "Usuario não encontrado";
+    public final String FORGOT_PASSWORD_NOT_FOUND = "Não foi encontrado registro para atualizar senha.";
 }

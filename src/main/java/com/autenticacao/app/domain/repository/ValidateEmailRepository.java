@@ -6,4 +6,5 @@ import com.autenticacao.app.domain.model.ValidateEmail;
 public interface ValidateEmailRepository {
     void saveValidateEmail(ValidateEmail validateEmail);
     ValidateEmail findByEmail(String email);
+    void deleteById(Long id);
 }
