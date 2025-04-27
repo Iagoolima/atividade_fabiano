@@ -9,4 +9,5 @@ public class MessageSucess {
     public final String VALIDATED_EMAIL_SENT_SUCESSFULLY = "Email validado com sucesso";
     public final String USER_CONECTED = "Usuario conectado";
     public final String UPDATE_PASSWORD = "Senha atualizada";
+    public final String USER_DELETED_SUCESS = "Usuario excluido com sucesso";
 }

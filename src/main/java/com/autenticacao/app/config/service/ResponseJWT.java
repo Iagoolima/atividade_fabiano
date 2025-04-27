@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 public class ResponseJWT {
-    private String acessToken;
+    private String accessToken;
     private String refreshToken;
 
-    public ResponseJWT(String acessToken, String refreshToken) {
-        this.acessToken = acessToken;
+    public ResponseJWT(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 }

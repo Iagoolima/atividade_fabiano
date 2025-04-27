@@ -12,9 +12,9 @@ import com.autenticacao.app.domain.repository.ValidateEmailRepository;
 import com.autenticacao.app.domain.utils.GenerateCode;
 import com.autenticacao.app.transportLayer.model.BodySendEmailModel;
 import com.autenticacao.app.transportLayer.sender.EmailSender;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,31 +23,24 @@ import java.time.LocalDateTime;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SendEmailRegisterUserUseCase {
 
-    @Autowired
-    private MessageError messageError;
+    private final MessageError messageError;
 
-    @Autowired
-    private MessageSucess messageSucess;
+    private final MessageSucess messageSucess;
 
-    @Autowired
-    private UserRepositoryImpl userRepository;
+    private final UserRepositoryImpl userRepository;
 
-    @Autowired
-    private GenerateCode generateCode;
+    private final GenerateCode generateCode;
 
-    @Autowired
-    private MessageValidateEmail messageValidateEmail;
+    private final MessageValidateEmail messageValidateEmail;
 
-    @Autowired
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
-    @Autowired
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
 
-    @Autowired
-    private ValidateEmailRepository validateEmailRepository;
+    private final ValidateEmailRepository validateEmailRepository;
 
     @Value("${minutes.expiration.validated.email}")
     private Long minutesExpiration;

@@ -6,7 +6,6 @@ import com.autenticacao.app.domain.model.User;
 import com.autenticacao.app.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -51,4 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
         return userData.map(userEnt -> mapper.map(userEntity, User.class)).orElse(null);
     }
 
+    public void deleteById(Long id) {
+        data.deleteById(id);
+    }
 }

@@ -2,8 +2,7 @@ package com.autenticacao.app.config.security;
 
 import com.autenticacao.app.config.service.JwtServiceImpl;
 import com.autenticacao.app.config.service.SecurityUserDetailsService;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -30,16 +29,19 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Value("${url.client}")
     private String urlClient;
 
-    @Autowired
-    private JwtServiceImpl jwtService;
+    private final JwtServiceImpl jwtService;
 
-    @Autowired
-    private SecurityUserDetailsService userDetailsService;
+    private final SecurityUserDetailsService userDetailsService;
+
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -50,12 +52,6 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Autowired
-    private CustomAuthenticationEntryPoint authenticationEntryPoint;
-
-    @Autowired
-    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) throws Exception {
@@ -73,8 +69,8 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/auth/login", "/register/**", "/forgot-password/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/verify/find/role_user").hasAnyRole("USER")
-                        .requestMatchers("/verify/find/role_admin").hasAnyRole("ADMIN")
+                        .requestMatchers("/verify/find/user").hasAnyRole("USER")
+                        .requestMatchers("/verify/find/admin").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

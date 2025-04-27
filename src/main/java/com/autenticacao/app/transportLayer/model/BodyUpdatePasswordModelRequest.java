@@ -2,11 +2,13 @@ package com.autenticacao.app.transportLayer.model;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.UUID;
 
 @Getter
 public class BodyUpdatePasswordModelRequest {
-    @NotBlank(message = "Senha necessario")
+    @NotBlank(message = "Campo de senha necessaria")
+    @Length(min = 4, max = 50, message = "Sua senha deve conter no minimo 4 caracteres")
     private String password;
 }

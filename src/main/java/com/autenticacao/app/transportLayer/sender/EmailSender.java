@@ -3,7 +3,7 @@ package com.autenticacao.app.transportLayer.sender;
 import com.autenticacao.app.domain.constants.MessageError;
 import com.autenticacao.app.config.exception.GeneralErrorException;
 import com.autenticacao.app.transportLayer.model.BodySendEmailModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,9 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 @Service
+@RequiredArgsConstructor
 public class EmailSender {
+
     @Value("${smtp.host}")
     private String host;
 
@@ -29,8 +31,7 @@ public class EmailSender {
     @Value("${smtp.password}")
     private String password;
 
-    @Autowired
-    private MessageError error;
+    private final MessageError error;
 
     private Session configureSession() {
         Properties props = new Properties();

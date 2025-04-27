@@ -8,4 +8,5 @@ public interface UserRepository {
     User saveUserAndReturn(User user);
     User findByEmail(String email);
     User findById(User user);
+    void deleteById(Long id);
 }

@@ -30,9 +30,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String token = authorization.split(" ")[1];
 
             try {
-                if (jwtService.isTokenValido(token)) {
-                    String login = jwtService.obterLoginUsuario(token);
-                    String typeToken = jwtService.obterRefreshToken(token);
+                if (jwtService.isTokenValidated(token)) {
+                    String login = jwtService.getLoginUser(token);
+                    String typeToken = jwtService.getRefreshToken(token);
 
                     CustomUserDetails userAuth = (CustomUserDetails) userDetailService.loadUserByUsername(login);
                     if (userAuth != null) {
@@ -42,12 +42,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                        Business.init(userAuth.getUser(), jwtService.generateToken(userAuth.getUser()), typeToken);
+                        if(typeToken.equals("refresh"))
+                            Business.init(userAuth.getUser(), jwtService.generateToken(userAuth.getUser()), typeToken);
+
+                        Business.init(userAuth.getUser(), null, typeToken);
                     }
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.setContentType("application/json");
-                    response.getWriter().write("{\"error\": \"Token inválido\"}");
+                    response.getWriter().write("{\"error\": \"Token invalido\"}");
                     return;
                 }
             } catch (Exception e) {

@@ -1,16 +1,17 @@
 package com.autenticacao.app.config.security;
 
+import com.autenticacao.app.config.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
@@ -23,14 +24,16 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
 
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpServletResponse.SC_FORBIDDEN,
+                "Acesso negado"
+        );
+
+        ResponseEntity<ErrorResponse> responseEntity = new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpServletResponse.SC_FORBIDDEN);
-        body.put("error", "Access Denied");
-        body.put("message", accessDeniedException.getMessage());
-
-        objectMapper.writeValue(response.getOutputStream(), body);
+        objectMapper.writeValue(response.getOutputStream(), responseEntity.getBody());
     }
 }

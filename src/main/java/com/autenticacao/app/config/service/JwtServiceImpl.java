@@ -1,6 +1,5 @@
 package com.autenticacao.app.config.service;
 
-import com.autenticacao.app.adapter.entity.UserEntity;
 import com.autenticacao.app.domain.model.User;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
@@ -21,8 +20,8 @@ import java.util.Base64;
 @Service
 public class JwtServiceImpl {
 
-    @Value("${jwt.acess-expiracao}")
-    private String acessExpiration;
+    @Value("${jwt.access-expiracao}")
+    private String accessExpiration;
 
     @Value("${jwt.refresh-expiracao}")
     private String refreshExpiration;
@@ -39,10 +38,10 @@ public class JwtServiceImpl {
     }
 
     public ResponseJWT generateToken(User user) throws JOSEException {
-        var acessToken = generate(user, acessExpiration, "acess");
+        var accessToken = generate(user, accessExpiration, "access");
         var refreshToken = generate(user, refreshExpiration, "refresh");
 
-        return new ResponseJWT(acessToken, refreshToken);
+        return new ResponseJWT(accessToken, refreshToken);
     }
 
     private String generate(User user, String timeExpiration, String typeToken) throws JOSEException {
@@ -85,7 +84,7 @@ public class JwtServiceImpl {
         return signedJWT.getJWTClaimsSet();
     }
 
-    public boolean isTokenValido(String token) {
+    public boolean isTokenValidated(String token) {
         try {
             JWTClaimsSet claims = getClaims(token);
             java.util.Date dataEx = claims.getExpirationTime();
@@ -98,7 +97,7 @@ public class JwtServiceImpl {
         }
     }
 
-    public String obterLoginUsuario(String token) {
+    public String getLoginUser(String token) {
         try {
             JWTClaimsSet claims = getClaims(token);
             return claims.getSubject();
@@ -108,7 +107,7 @@ public class JwtServiceImpl {
         }
     }
 
-    public String obterRefreshToken(String token) {
+    public String getRefreshToken(String token) {
         try {
             JWTClaimsSet claims = getClaims(token);
             Object type = claims.getClaim("type");

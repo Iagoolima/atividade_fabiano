@@ -9,28 +9,25 @@ import com.autenticacao.app.interactor.RegisterFinalUserUseCase;
 import com.autenticacao.app.interactor.SendEmailRegisterUserUseCase;
 import com.autenticacao.app.transportLayer.model.*;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/register")
+@RequiredArgsConstructor
 public class RegisterController {
 
-    @Autowired
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
-    @Autowired
-    private RegisterFinalUserUseCase registerFinalUserUseCase;
+    private final RegisterFinalUserUseCase registerFinalUserUseCase;
 
-    @Autowired
-    private SendEmailRegisterUserUseCase sendEmailRegisterUserUseCase;
+    private final SendEmailRegisterUserUseCase sendEmailRegisterUserUseCase;
 
-    @Autowired
-    private ConfirmEmailUseCase confirmEmailUseCase;
+    private final ConfirmEmailUseCase confirmEmailUseCase;
 
     @PostMapping("/validate-email")
     public ResponseEntity<BodySucessMessageModelResponse> sendEmail(@RequestBody  @Valid BodyEmailUserModelRequest emailUserModelRequest) {

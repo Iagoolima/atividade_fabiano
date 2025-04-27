@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +19,7 @@ public class VerifyController {
 
     private final ModelMapper mapper;
 
-    @PostMapping("/find/user")
+    @GetMapping("/find/user")
     public ResponseEntity<BodySucessValueModelResponse> verfifyRoleUser() {
         var user = Business.getInstance().getUser();
         var response = new SucessValueResponse(mapper.map(user, BodyUserModelResponse.class));
@@ -35,7 +35,7 @@ public class VerifyController {
                 .body(responseBody);
     }
 
-    @PostMapping("/find/admin")
+    @GetMapping("/find/admin")
     public ResponseEntity<BodySucessValueModelResponse> verifyRoleAdmin() {
         var user = Business.getInstance().getUser();
         var response = new SucessValueResponse(mapper.map(user, BodyUserModelResponse.class));
