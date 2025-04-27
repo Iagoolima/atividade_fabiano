@@ -101,4 +101,5 @@ A aplicação expõe algumas rotas para autenticação e operações de usuário
 
 ## Diagrama
 
-![alt text](diagrama.png)
+<img width="555" alt="diagrama" src="https://github.com/user-attachments/assets/776afdec-b097-4ec9-a18a-7445370c94b2" />
+
