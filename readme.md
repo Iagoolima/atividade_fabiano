@@ -98,3 +98,7 @@ O banco de dados utilizado é o **PostgreSQL**, configurado no `docker-compose.y
 A aplicação expõe algumas rotas para autenticação e operações de usuário. Para uma lista completa de rotas e documentação da API, consulte a documentação gerada pelo **SpringDoc OpenAPI**:
 
 - Acesse a documentação da API em [http://localhost:8080/swagger-ui](http://localhost:8080/swagger-ui).
+
+## Diagrama
+
+![alt text](diagrama.png)
