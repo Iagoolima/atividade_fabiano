@@ -52,7 +52,7 @@ public class SendEmailForgotPasswordUseCase {
         var bodySendEmail = createBodySendEmail(forgotPassword);
         sendEmail(bodySendEmail);
         saveForgotPassword(forgotPassword);
-
+        log.info("{}: {}", messageSucess.EMAIL_SENT_SUCESSFULLY, emailUser.getEmail());
         return new SucessMessageResponse(messageSucess.EMAIL_SENT_SUCESSFULLY);
     }
 

@@ -8,10 +8,12 @@ import com.autenticacao.app.domain.model.ConfirmEmail;
 import com.autenticacao.app.domain.model.SucessMessageResponse;
 import com.autenticacao.app.domain.model.ValidateEmail;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ConfirmEmailUseCase {
 
@@ -28,7 +30,7 @@ public class ConfirmEmailUseCase {
         validateTime(confirmEmail, validateEmail);
         validateCode(confirmEmail, validateEmail);
         emailValidated(validateEmail);
-
+        log.info("{}: {}", messageSucess.VALIDATED_EMAIL_SENT_SUCESSFULLY, confirmEmail.getEmail());
         return new SucessMessageResponse(messageSucess.VALIDATED_EMAIL_SENT_SUCESSFULLY);
     }
 

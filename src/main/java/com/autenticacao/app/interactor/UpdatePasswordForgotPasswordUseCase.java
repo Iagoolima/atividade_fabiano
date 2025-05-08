@@ -11,11 +11,13 @@ import com.autenticacao.app.domain.repository.ForgotPasswordRepository;
 import com.autenticacao.app.domain.repository.UserRepository;
 import com.autenticacao.app.domain.utils.Encrypt;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UpdatePasswordForgotPasswordUseCase {
 
@@ -35,7 +37,7 @@ public class UpdatePasswordForgotPasswordUseCase {
         var user = updatePasswordUser(updatePassword, forgotPassword.getIdUser());
         saveUser(user);
         deleteForgotPassword(forgotPassword);
-
+        log.info("{}: {}", messageSucess.UPDATE_PASSWORD, user.getEmail());
         return new SucessMessageResponse(messageSucess.UPDATE_PASSWORD);
     }
 
