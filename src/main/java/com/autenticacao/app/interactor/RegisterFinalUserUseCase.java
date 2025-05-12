@@ -5,11 +5,10 @@ import com.autenticacao.app.config.service.JwtServiceImpl;
 import com.autenticacao.app.domain.constants.MessageError;
 import com.autenticacao.app.config.exception.GeneralErrorException;
 import com.autenticacao.app.domain.constants.MessageSucess;
-import com.autenticacao.app.domain.model.SucessValueResponse;
+import com.autenticacao.app.domain.model.SucessMessageResponse;
 import com.autenticacao.app.domain.model.User;
 import com.autenticacao.app.domain.model.ValidateEmail;
 import com.autenticacao.app.domain.repository.UserRepository;
-import com.autenticacao.app.domain.repository.ValidateEmailRepository;
 import com.autenticacao.app.domain.utils.Encrypt;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
@@ -38,15 +37,14 @@ public class RegisterFinalUserUseCase {
 
     private final JwtServiceImpl jwtService;
 
-
-    public SucessValueResponse register(User user) throws JOSEException {
+    public SucessMessageResponse register(User user) throws JOSEException {
         userExists(user);
         var validateEmail = ProcessValidatedEmail(user);
         user = generatedPassword(user);
         var registeredUser = saveUser(user);
         deleteValidateEmail(validateEmail);
         log.info("{}: {}", messageSucess.REGISTERED_USER, user.getEmail());
-        return new SucessValueResponse(null);
+        return new SucessMessageResponse(messageSucess.REGISTERED_USER);
     }
 
     private void userExists(User user) {

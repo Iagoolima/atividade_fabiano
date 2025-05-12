@@ -1,6 +1,5 @@
 package com.autenticacao.app.transportLayer.api;
 
-import com.autenticacao.app.domain.business.Business;
 import com.autenticacao.app.domain.model.ConfirmEmail;
 import com.autenticacao.app.domain.model.EmailUser;
 import com.autenticacao.app.domain.model.User;
@@ -49,14 +48,11 @@ public class RegisterController {
 
     @SneakyThrows
     @PostMapping("/full")
-    public ResponseEntity<BodySucessValueModelResponse> registerFinal(@RequestBody @Valid BodyUserRegisterModelRequest userModelRequest) {
+    public ResponseEntity<BodySucessMessageModelResponse> registerFinal(@RequestBody @Valid BodyUserRegisterModelRequest userModelRequest) {
         var user = mapper.map(userModelRequest, User.class);
         var response = registerFinalUserUseCase.register(user);
 
-        var responseBody = mapper.map(response, BodySucessValueModelResponse.class);
-
-        var token = Business.getInstance().getToken();
-        responseBody.setToken(token);
+        var responseBody = mapper.map(response, BodySucessMessageModelResponse.class);
 
         return ResponseEntity
                     .status(200)

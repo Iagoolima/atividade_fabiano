@@ -1,6 +1,7 @@
 package com.autenticacao.app.config.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE)
+@Slf4j
 public class ErrorException {
 
     @ResponseBody
@@ -33,6 +35,7 @@ public class ErrorException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleRuntimeExceptions(Exception ex, HttpServletRequest request) {
+        log.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage())
         );
