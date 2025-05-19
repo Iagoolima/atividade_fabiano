@@ -29,7 +29,7 @@ public class ForgotPasswordController {
     private final UpdatePasswordForgotPasswordUseCase updatePasswordForgotPasswordUseCase;
 
     @PostMapping("/send-email")
-    public ResponseEntity<BodySucessMessageModelResponse> forgotPassword(@RequestBody BodyEmailUserModelRequest bodyEmailUserModel) {
+    public ResponseEntity<BodySucessMessageModelResponse> forgotPassword(@RequestBody @Valid BodyEmailUserModelRequest bodyEmailUserModel) {
         var emailUser = mapper.map(bodyEmailUserModel, EmailUser.class);
         var response = sendEmailForgotPasswordUseCase.sendEmail(emailUser);
 
